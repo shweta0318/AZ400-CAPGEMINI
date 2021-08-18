@@ -1,0 +1,8 @@
+command to create
+
+az deployment group create --resource-group aditi --template-file aditi.json --parameters aditip.json
+
+
+
+
+azure quickstart template

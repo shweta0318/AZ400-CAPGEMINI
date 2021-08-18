@@ -1,0 +1,36 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminUsername": {
+      "value": "aditi"
+    },
+    "adminPassword": {
+      "value": "Password@123"
+    },
+    "dnsLabelPrefix": {
+      "value": "simple-vm-3e6016c578"
+    },
+    "publicIpName": {
+      "value": "simple-vm-ip"
+    },
+    "publicIPAllocationMethod": {
+      "value": "Dynamic"
+    },
+    "publicIpSku": {
+      "value": "Basic"
+    },
+    "OSVersion": {
+      "value": "2019-Datacenter"
+    },
+    "vmSize": {
+      "value": "Standard_D2_v2"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "vmName": {
+      "value": "simple-vm"
+    }
+  }
+}
