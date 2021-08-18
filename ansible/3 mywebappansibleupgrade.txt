@@ -1,0 +1,33 @@
+- hosts: localhost
+  connection: local
+  vars:
+    resource_group: myResourceGroup
+    plan_name: netlinkppplan1234
+    location: eastus
+
+  tasks:
+  - name: Get facts of existing App service plan
+    azure_rm_appserviceplan_facts:
+      resource_group: "{{ resource_group }}"
+      name: "{{ plan_name }}"
+    register: facts
+
+  - debug: 
+      var: facts.appserviceplans[0].sku
+
+  - name: Scale up the App service plan
+    azure_rm_appserviceplan:
+      resource_group: "{{ resource_group }}"
+      name: "{{ plan_name }}"
+      is_linux: true
+      sku: S2
+      number_of_workers: 3
+      
+  - name: Get facts
+    azure_rm_appserviceplan_facts:
+      resource_group: "{{ resource_group }}"
+      name: "{{ plan_name }}"
+    register: facts
+
+  - debug: 
+      var: facts.appserviceplans[0].sku

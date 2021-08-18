@@ -1,0 +1,63 @@
+---
+- name: Create Azure VM
+  hosts: localhost
+  connection: local
+  tasks:
+  - name: Create resource group
+    azure_rm_resourcegroup:
+      name: myresourcegroupans
+      location: eastus
+  - name: Create virtual network
+    azure_rm_virtualnetwork:
+      resource_group: myresourcegroupans
+      name: myvnetdemo
+      address_prefixes: "10.1.0.0/16"
+  - name: Add subnet
+    azure_rm_subnet:
+      resource_group: myresourcegroupans
+      name: subnetdemo
+      address_prefix: "10.1.1.0/24"
+      virtual_network: myvnetdemo
+  - name: Create public IP address
+    azure_rm_publicipaddress:
+      resource_group: myresourcegroupans
+      allocation_method: Static
+      name: myPublicIPdemo
+    register: output_ip_address
+  - name: Dump public IP for VM which will be created
+    debug:
+      msg: "The public IP is {{ output_ip_address.state.ip_address }}."
+  - name: Create Network Security Group that allows RDP
+    azure_rm_securitygroup:
+      resource_group: myresourcegroupans
+      name: myNetworkSecurityGroupdemo
+      rules:
+        - name: RDP
+          protocol: Tcp
+          destination_port_range: 3389
+          access: Allow
+          priority: 1001
+          direction: Inbound
+  - name: Create virtual network interface card
+    azure_rm_networkinterface:
+      resource_group: myresourcegroupans
+      name: myNICdemo
+      virtual_network: myvnetdemo
+      subnet: subnetdemo
+      public_ip_name: myPublicIPdemo
+      security_group: myNetworkSecurityGroupdemo
+  - name: Create VM
+    azure_rm_virtualmachine:
+      os_type: Windows 
+      resource_group: myresourcegroupans
+      name: myVMdemo
+      vm_size: Standard_DS1_v2
+      admin_username: azureuser
+      admin_password: 'Password@123'      
+      network_interfaces: myNICdemo
+      image:
+        offer: WindowsServer
+        publisher: MicrosoftWindowsServer
+        sku: '2016-Datacenter'
+        version: latest
+                                                                                                   

@@ -1,0 +1,81 @@
+ansible --version
+vi resourcecreate.yaml
+ansible-playbook -C resourcecreate.yaml - first check if syntax is ok with -C
+az group list --output table 
+
+==== Create a Resource Group===================
+---
+- hosts: localhost
+  connection: local
+  tasks:
+   - name: craete resource group
+     azure_rm_resourcegroup:
+       name: ansibledemo
+       location: eastus
+
+================Delete a Resource Group===============================
+---
+- hosts: localhost
+  connection: local
+  tasks:
+  - name: Delete a resource group
+    azure_rm_resourcegroup:
+       name: ansibledemo
+       state: absent
+
+===================Craete  a Virtiul Network with One Subnet=============================
+
+---
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: Create Virtual Network
+      azure_rm_virtualnetwork:
+           resource_group: ansibledemo
+           name: ansiblevnet
+           address_prefixes: "10.0.0.0/16"
+    - name: Add Subnet in Vnet
+      azure_rm_subnet:
+           name: techpledgesub
+           resource_group: ansibledemo
+           address_prefix: "10.0.1.0/24"
+           virtual_network: ansiblevnet
+
+================= Create a Storage Account ==================
+---
+- hosts: localhost
+  connection: local
+  tasks:
+     - name: create an account
+       azure_rm_storageaccount:
+            resource_group: ansibledemo
+            name: techpledge090
+            type: Standard_RAGRS
+            tags:
+                testing: testing
+                delete: on-exit
+
+===== Create a Blob Storage ==================================
+---
+- hosts: localhost
+  connection: local
+  tasks:
+
+     - name: Create container foo and upload a file
+       azure_rm_storageblob:
+         resource_group: ansibledemo
+         storage_account_name: techpledge090
+         container: foo
+
+
+================= Delete a Respurce Group With All Contens ==================
+---
+- hosts: localhost
+  connection: local
+  tasks: 
+
+       - name: Delete a resource group including resources it contains
+         azure_rm_resourcegroup:
+           name: ansibledemo
+           force_delete_nonempty: yes
+           state: absent
